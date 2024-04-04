@@ -5905,7 +5905,7 @@ def get_CIES026(
     sss = sss[:, ::binwidth]
     sss = pd.DataFrame(data=sss.T, columns=colnames)
     sss.set_index("Wavelength", inplace=True)
-    sss.index = pd.Int64Index(sss.index)
+    #sss.index = pd.Int64Index(sss.index)
     if fillna:
         sss = sss.fillna(0)
     return sss

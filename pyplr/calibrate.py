@@ -366,7 +366,9 @@ class CalibrationContext:
         # TODO: generalise and improve flexibility
         lkp_tbl = pd.DataFrame()
         for led, df in self.data.groupby(["led"]):
-            lkp_tbl = lkp_tbl.append(self.interp_led_spectra(led, df))
+            print(led)
+            lkp_tbl = pd.concat([lkp_tbl, self.interp_led_spectra(led, df)])
+            # lkp_tbl = lkp_tbl.append(self.interp_led_spectra(led, df)) # changed from lkp_tbl = lkp_tbl.append(self.interp_led_spectra(led, df)) 
         lkp_tbl.set_index(["led", "intensity"], inplace=True)
         return lkp_tbl
 
@@ -383,7 +385,7 @@ class CalibrationContext:
             .interpolate(method="linear")
         )
         df["intensity"] = df.index
-        df["led"] = led
+        df["led"] = [led] * 4096
         return df
 
     def create_alphaopic_irradiances_table(self) -> pd.DataFrame:
