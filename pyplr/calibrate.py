@@ -397,7 +397,7 @@ class CalibrationContext:
             Alphaopic irradiances.
 
         """
-        sss = get_CIES026(asdf=True, binwidth=self.binwidth)
+        sss = get_CIES026(binwidth=self.binwidth)
         sss = sss.fillna(0)
         return self.lkp.dot(sss)
 
@@ -411,7 +411,7 @@ class CalibrationContext:
             Lux values.
 
         """
-        vl = get_CIE_1924_photopic_vl(asdf=True, binwidth=self.binwidth)
+        vl = get_CIE_1924_photopic_vl(binwidth=self.binwidth)
         lux = self.lkp.dot(vl.values) * 683
         lux.columns = ["lux"]
         return lux
