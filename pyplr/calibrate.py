@@ -27,7 +27,11 @@ import seaborn as sns
 
 from pyplr.stlab import SpectraTuneLab
 from pyplr.stlabhelp import get_led_colors
-from pyplr.CIE import get_CIE_1924_photopic_vl, get_CIES026
+import pyplr.CIE as CIE
+from importlib import reload
+reload(CIE)
+#from pyplr.CIE import get_CIE_1924_photopic_vl
+#from pyplr.CIE import get_CIES026
 
 
 class SpectraTuneLabSampler(SpectraTuneLab):
@@ -399,7 +403,7 @@ class CalibrationContext:
             Alphaopic irradiances.
 
         """
-        sss = get_CIES026(binwidth=self.binwidth)
+        sss = CIE.get_CIES026(binwidth=self.binwidth)
         sss = sss.fillna(0)
         return self.lkp.dot(sss)
 
@@ -413,7 +417,7 @@ class CalibrationContext:
             Lux values.
 
         """
-        vl = get_CIE_1924_photopic_vl(binwidth=self.binwidth)
+        vl = CIE.get_CIE_1924_photopic_vl(binwidth=self.binwidth)
         lux = self.lkp.dot(vl.values) * 683
         lux.columns = ["lux"]
         return lux
@@ -543,7 +547,7 @@ class CalibrationContext:
 
         """
         spectrum = self.predict_spd(intensities)
-        sss = get_CIES026(asdf=True, binwidth=self.binwidth)
+        sss = CIE.get_CIES026(asdf=True, binwidth=self.binwidth)
         sss = sss.fillna(0)
         return spectrum.dot(sss)
 
