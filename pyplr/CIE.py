@@ -1824,7 +1824,7 @@ def get_CIE_2006_10_deg_CMF(
     if asdf:
         cmf = pd.DataFrame(data=cmf, columns=colnames)
         cmf.set_index("Wavelength", inplace=True)
-        cmf.index = pd.Int64Index(cmf.index)
+        cmf.index = pd.Index(cmf.index)
     return cmf
 
 
@@ -3462,7 +3462,7 @@ def get_CIE_CMF(asdf: Optional[bool] = True, binwidth: Optional[int] = 1):
     if asdf:
         cmf = pd.DataFrame(data=cmf.T, columns=colnames)
         cmf.set_index("Wavelength", inplace=True)
-        cmf.index = pd.Int64Index(cmf.index)
+        cmf.index = pd.Index(cmf.index)
     return cmf
 
 
@@ -5905,7 +5905,7 @@ def get_CIES026(
     sss = sss[:, ::binwidth]
     sss = pd.DataFrame(data=sss.T, columns=colnames)
     sss.set_index("Wavelength", inplace=True)
-    sss.index = pd.Int64Index(sss.index)
+    sss.index = pd.Index(sss.index) #prev: sss.index = pd.Int64Index(sss.index)
     if fillna:
         sss = sss.fillna(0)
     return sss
@@ -6738,7 +6738,7 @@ def get_CIE_1924_photopic_vl(binwidth: Optional[int] = 1) -> pd.DataFrame:
 
     vl = vl.reshape(401, 2).astype(np.float64).T
     vl = vl[:, ::binwidth]
-    idx = pd.Int64Index(vl[0], name="Wavelength")
+    idx = pd.Index(vl[0], name="Wavelength")
     return pd.Series(data=vl[1], index=idx, name="vl")
 
 
@@ -8538,7 +8538,7 @@ def get_CIE170_2_chromaticity_coordinates(
     coord = coord[:, ::binwidth]
     coord = pd.DataFrame(data=coord.T, columns=colnames)
     coord.set_index("Wavelength", inplace=True)
-    coord.index = pd.Int64Index(coord.index)
+    coord.index = pd.Index(coord.index)
     if connect:
         coord = coord.append(coord.iloc[0], ignore_index=True)
     return coord

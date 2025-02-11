@@ -27,7 +27,11 @@ import seaborn as sns
 
 from pyplr.stlab import SpectraTuneLab
 from pyplr.stlabhelp import get_led_colors
-from pyplr.CIE import get_CIE_1924_photopic_vl, get_CIES026
+import pyplr.CIE as CIE
+from importlib import reload
+reload(CIE)
+#from pyplr.CIE import get_CIE_1924_photopic_vl
+#from pyplr.CIE import get_CIES026
 
 
 class SpectraTuneLabSampler(SpectraTuneLab):
@@ -366,7 +370,9 @@ class CalibrationContext:
         # TODO: generalise and improve flexibility
         lkp_tbl = pd.DataFrame()
         for led, df in self.data.groupby(["led"]):
-            lkp_tbl = lkp_tbl.append(self.interp_led_spectra(led, df))
+            print(led)
+            lkp_tbl = pd.concat([lkp_tbl, self.interp_led_spectra(led, df)])
+            # lkp_tbl = lkp_tbl.append(self.interp_led_spectra(led, df)) # changed from lkp_tbl = lkp_tbl.append(self.interp_led_spectra(led, df)) 
         lkp_tbl.set_index(["led", "intensity"], inplace=True)
         return lkp_tbl
 
@@ -383,7 +389,7 @@ class CalibrationContext:
             .interpolate(method="linear")
         )
         df["intensity"] = df.index
-        df["led"] = led
+        df["led"] = [led] * 4096
         return df
 
     def create_alphaopic_irradiances_table(self) -> pd.DataFrame:
@@ -397,7 +403,7 @@ class CalibrationContext:
             Alphaopic irradiances.
 
         """
-        sss = get_CIES026(asdf=True, binwidth=self.binwidth)
+        sss = CIE.get_CIES026(binwidth=self.binwidth)
         sss = sss.fillna(0)
         return self.lkp.dot(sss)
 
@@ -411,7 +417,7 @@ class CalibrationContext:
             Lux values.
 
         """
-        vl = get_CIE_1924_photopic_vl(asdf=True, binwidth=self.binwidth)
+        vl = CIE.get_CIE_1924_photopic_vl(binwidth=self.binwidth)
         lux = self.lkp.dot(vl.values) * 683
         lux.columns = ["lux"]
         return lux
@@ -541,7 +547,7 @@ class CalibrationContext:
 
         """
         spectrum = self.predict_spd(intensities)
-        sss = get_CIES026(asdf=True, binwidth=self.binwidth)
+        sss = CIE.get_CIES026(asdf=True, binwidth=self.binwidth)
         sss = sss.fillna(0)
         return spectrum.dot(sss)
 
